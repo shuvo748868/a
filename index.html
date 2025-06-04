@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A & S Business Management System" />
+  <meta name="keywords" content="Business, Inventory, Sales, Profit, Management" />
+  <meta name="author" content="A & S Business" />
+  <title>A & S Business</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e6ecf0;
+      color: #333;
+      padding: 1rem;
+    }
+    header {
+      background: linear-gradient(to right, #0d1b2a, #1b263b);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      border-radius: 10px 10px 0 0;
+    }
+    nav {
+      background-color: #1b263b;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      border-radius: 10px;
+      margin-top: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    nav button {
+      padding: 1rem;
+      background: none;
+      border: none;
+      font-weight: bold;
+      color: #f1f1f1;
+      cursor: pointer;
+      transition: 0.3s;
+      flex: 1 1 100px;
+      max-width: 150px;
+    }
+    nav button.active, nav button:hover {
+      border-bottom: 3px solid #fca311;
+      color: #fca311;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem 1.5rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    section {
+      display: none;
+      padding: 1rem 0;
+    }
+    section.active { display: block; }
+    h2 {
+      color: #0d1b2a;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #1b263b;
+      color: white;
+      border: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover { background-color: #415a77; }
+    ul { list-style-type: none; padding-left: 0; max-height: 250px; overflow-y: auto; }
+    li { padding: 0.5rem 0; border-bottom: 1px solid #eee; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    img.product-img {
+      width: 100px;
+      height: auto;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    #login-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #0d1b2a;
+    }
+    #login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    #main-content { display: none; }
+    #searchInput, #duesSearchInput, #salesHistorySearchInput, #customerBuyPriceSearch {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #customerRankingBox {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #ddd;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #customerRankingBox h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    #customerRankingList li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+    }
+    #bestSellingBox {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f0f8ff;
+      border-radius: 10px;
+      box-shadow: inset 0 0 12px #a2c4c9;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #bestSellingBox h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    #bestSellingList li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+    }
+    .edit-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 1rem;
+    }
+    .edit-btn:hover {
+      background-color: #218838;
+    }
+    #editInventoryForm, #editCustomerForm, #editSaleForm, #editCustomerPriceForm {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 5px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #salesProfitBox {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #salesCustomerRankingBox {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f0f8ff;
+      border-radius: 10px;
+      box-shadow: inset 0 0 12px #a2c4c9;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #salesCustomerRankingBox h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    #salesCustomerRankingList li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+    }
+    #monthlySalesChart {
+      max-height: 300px;
+      margin-top: 1rem;
+    }
+    .dropdown-container {
+      display: flex;
+      gap: 1rem;
+    }
+    .dropdown-container select {
+      flex: 1;
+    }
+    #paymentForm {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 5px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #paymentForm h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+    }
+    .customer-details {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #f0f8ff;
+      border-radius: 5px;
+    }
+    .payment-history {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #fff;
+      border-radius: 5px;
+      display: none;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .payment-history.active { display: block; }
+    .payment-history ul {
+      padding-left: 1rem;
+      max-height: none;
+    }
+    .payment-history li {
+      font-size: 0.9rem;
+      padding: 0.3rem 0;
+    }
+    .toggle-history-btn {
+      background-color: #6c757d;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 1rem;
+    }
+    .toggle-history-btn:hover {
+      background-color: #5a6268;
+    }
+    .advanced-btn {
+      background-color: #17a2b8;
+      color: white;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .advanced-btn:hover {
+      background-color: #138496;
+    }
+    #duesBox {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #duesList li {
+      display: block;
+      padding: 1rem;
+      background: #fff;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    #duesList .due-details {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #f0f8ff;
+      border-radius: 5px;
+    }
+    #salesHistoryBox {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #salesHistoryBox h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    #salesHistoryList li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+    }
+    #customerBuyPriceBox {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #ddd;
+    }
+    #customerBuyPriceBox h3 {
+      margin-bottom: 1rem;
+      color: #0d1b2a;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+    #customerBuyPriceList li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-page">
+    <div id="login-box">
+      <h2 style="text-align: center; color: #0d1b2a;">Login</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <p id="login-error" style="color: red; text-align: center; margin-top: 0.5rem; display: none;">Invalid credentials</p>
+    </div>
+  </div>
+  <div id="main-content">
+    <header>
+      <h1>A & S Business</h1>
+    </header>
+    <nav>
+      <button onclick="showSection('inventory')" id="btn-inventory">Product Inventory</button>
+      <button onclick="showSection('today')" id="btn-today">Today's Sales</button>
+      <button onclick="showSection('salesProfit')" id="btn-salesProfit">Sales & Profit</button>
+      <button onclick="showSection('customer')" id="btn-customer">Customer Information</button>
+      <button onclick="showSection('bestSelling')" id="btn-bestSelling">Best Selling Products</button>
+      <button onclick="showSection('dues')" id="btn-dues">Customer Dues</button>
+      <button onclick="showSection('salesHistory')" id="btn-salesHistory">Sales History</button>
+      <button onclick="showSection('customerBuyPrice')" id="btn-customerBuyPrice">Customer Buy Price</button>
+    </nav>
+    <main class="container">
+      <section id="inventory">
+        <h2>Product Inventory</h2>
+        <input type="text" id="invProductName" placeholder="Product Name" />
+        <input type="number" id="invBuyPrice" placeholder="Buy Price (in currency)" />
+        <input type="number" id="invQty" placeholder="Quantity" />
+        <input type="file" id="invImg" accept="image/*" />
+        <button onclick="addToInventory()">Add to Inventory</button>
+        <div id="editInventoryForm">
+          <h3>Edit Product</h3>
+          <input type="text" id="editProductName" placeholder="Product Name" disabled />
+          <input type="number" id="editBuyPrice" placeholder="Buy Price (in currency)" />
+          <input type="number" id="editQty" placeholder="Quantity" />
+          <input type="file" id="editImg" accept="image/*" />
+          <button onclick="updateInventoryItem()">Update Product</button>
+          <button onclick="cancelEdit()">Cancel</button>
+        </div>
+        <ul id="inventoryList"></ul>
+      </section>
+      <section id="today">
+        <h2>Today's Sales</h2>
+        <input type="text" id="saleCustomerName" placeholder="Customer Name" oninput="autoFillPrice()" />
+        <input type="text" id="saleProductName" placeholder="Product Name" oninput="autoFillPrice()" />
+        <input type="number" id="saleQty" placeholder="Quantity Sold" />
+        <input type="number" id="salePrice" placeholder="Selling Price per Unit (in currency)" />
+        <input type="number" id="salePaid" placeholder="Amount Paid by Customer (in currency)" />
+        <button onclick="processTodaySale()">Submit Sale</button>
+        <div id="editSaleForm">
+          <h3>Edit Sale</h3>
+          <input type="text" id="editSaleId" hidden />
+          <input type="text" id="editSaleCustomerName" placeholder="Customer Name" />
+          <input type="text" id="editSaleProductName" placeholder="Product Name" />
+          <input type="number" id="editSaleQty" placeholder="Quantity Sold" />
+          <input type="number" id="editSalePrice" placeholder="Selling Price per Unit (in currency)" />
+          <input type="number" id="editSalePaid" placeholder="Amount Paid by Customer (in currency)" />
+          <button onclick="updateTodaySale()">Update Sale</button>
+          <button onclick="cancelSaleEdit()">Cancel</button>
+        </div>
+        <ul id="todaySalesList"></ul>
+        <p id="todayProfit"></p>
+      </section>
+      <section id="salesProfit">
+        <h2>Sales & Profit</h2>
+        <div class="dropdown-container">
+          <select id="yearSelect" onchange="updateMonthlyData()">
+            <option value="2024">2024</option>
+            <option value="2025" selected>2025</option>
+            <option value="2026">2026</option>
+          </select>
+          <select id="monthSelect" onchange="updateMonthlyData()">
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June" selected>June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
+        </div>
+        <div id="salesProfitBox">
+          <p id="monthlySalesReport">Total Monthly Sales: ৳0</p>
+          <p id="monthlyProfitReport">Monthly Profit: ৳0</p>
+          <p id="yearlySalesReport">Total Yearly Sales: ৳0</p>
+          <p id="yearlyProfitReport">Yearly Profit: ৳0</p>
+          <p id="todayProfitReport">Today's Profit: ৳0</p>
+        </div>
+        <div id="salesCustomerRankingBox">
+          <h3>Top Customers by Purchase Frequency</h3>
+          <ul id="salesCustomerRankingList">
+            <li>No sales data yet.</li>
+          </ul>
+        </div>
+        <canvas id="monthlySalesChart"></canvas>
+      </section>
+      <section id="customer">
+        <h2>Customer Information</h2>
+        <input type="text" id="custName" placeholder="Customer Name" />
+        <input type="text" id="custContact" placeholder="Contact Number" />
+        <input type="text" id="custAddress" placeholder="Address" />
+        <button onclick="saveCustomerInfo()">Save Customer</button>
+        <div id="editCustomerForm">
+          <h3>Edit Customer</h3>
+          <input type="text" id="editCustomerId" hidden />
+          <input type="text" id="editCustomerName" placeholder="Customer Name" disabled />
+          <input type="text" id="editCustomerContact" placeholder="Contact Number" />
+          <input type="text" id="editCustomerAddress" placeholder="Address" />
+          <button onclick="updateCustomerInfo()">Update Customer</button>
+          <button onclick="cancelCustomerEdit()">Cancel</button>
+        </div>
+        <div id="paymentForm">
+          <h3>Record Customer Payment</h3>
+          <input type="text" id="paymentCustomerName" placeholder="Customer Name" />
+          <input type="number" id="paymentAmount" placeholder="Payment Amount (৳)" />
+          <button onclick="recordPayment()">Record Payment</button>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search by Name, Contact, or Address" onkeyup="searchCustomers()" />
+        <button class="advanced-btn" onclick="showAdvancedOptions()">Advanced</button>
+        <div id="advancedOptions" style="display: none; margin-top: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px;">
+          <h3>Advanced Options</h3>
+          <label><input type="checkbox" id="showDuesOnly" onchange="searchCustomers()"> Show Only Customers with Dues</label>
+        </div>
+        <ul id="customerList"></ul>
+        <div id="customerRankingBox">
+          <h3>Customer Ranking (Most Frequent Entries)</h3>
+          <ul id="customerRankingList">
+            <li>No data yet.</li>
+          </ul>
+        </div>
+      </section>
+      <section id="bestSelling">
+        <h2>Best Selling Products</h2>
+        <div id="bestSellingBox">
+          <h3>Top Products by Quantity Sold</h3>
+          <ul id="bestSellingList">
+            <li>No sales data yet.</li>
+          </ul>
+        </div>
+      </section>
+      <section id="dues">
+        <h2>Customer Dues</h2>
+        <input type="text" id="duesSearchInput" placeholder="Search by Customer Name" onkeyup="searchDues()" />
+        <button class="advanced-btn" onclick="showAdvancedDuesOptions()">Advanced</button>
+        <div id="advancedDuesOptions" style="display: none; margin-top: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px;">
+          <h3>Advanced Options</h3>
+          <label><input type="checkbox" id="sortByDueAmount" onchange="searchDues()"> Sort by Due Amount (High to Low)</label>
+        </div>
+        <div id="duesBox">
+          <ul id="duesList"></ul>
+        </div>
+      </section>
+      <section id="salesHistory">
+        <h2>Sales History</h2>
+        <input type="text" id="salesHistoryCustomerName" placeholder="Customer Name" />
+        <div class="dropdown-container">
+          <select id="salesHistoryYear" onchange="searchSalesHistory()">
+            <option value="">Select Year</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+          <select id="salesHistoryMonth" onchange="searchSalesHistory()">
+            <option value="">Select Month</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option 
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
+          <input type="date" id="salesHistoryDate" onchange="searchSalesHistory()" />
+        </div>
+        <button onclick="searchSalesHistory()">Search Sales</button>
+        <div id="salesHistoryBox">
+          <h3>Sales Records</h3>
+          <ul id="salesHistoryList">
+            <li>No sales data found.</li>
+          </ul>
+        </div>
+      </section>
+      <section id="customerBuyPrice">
+        <h2>Customer Buy Price</h2>
+        <input type="text" id="customerBuyPriceSearch" placeholder="Search by Customer Name" onkeyup="searchCustomerBuyPrice()" />
+        <div id="editCustomerPriceForm">
+          <h3>Edit Customer Price</h3>
+          <input type="text" id="editCustomerPriceCustomer" placeholder="Customer Name" disabled />
+          <input type="text" id="editCustomerPriceProduct" placeholder="Product Name" disabled />
+          <input type="number" id="editCustomerPrice" placeholder="Selling Price per Unit (৳)" />
+          <button onclick="updateCustomerPrice()">Update Price</button>
+          <button onclick="cancelCustomerPriceEdit()">Cancel</button>
+        </div>
+        <div id="customerBuyPriceBox">
+          <h3>Customer Purchase Prices</h3>
+          <ul id="customerBuyPriceList">
+            <li>No data found.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "business-bfa75.firebaseapp.com",
+      databaseURL: "https://business-bfa75-default-rtdb.firebaseio.com",
+      projectId: "business-bfa75",
+      storageBucket: "business-bfa75.appspot.com",
+      messagingSenderId: "97408039915",
+      appId: "1:97408039915:web:d1fe854831f786846977ae",
+      measurementId: "G-S4W6GXRHD7"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Data variables
+    let inventory = {};
+    let monthlySales = 0;
+    let yearlySales = 0;
+    let todayProfit = 0;
+    let monthlyProfit = 0;
+    let yearlyProfit = 0;
+    let customerInfo = [];
+    let productSales = {};
+    let todaySales = [];
+    let customerPayments = {};
+    let customerBuyPrices = {};
+    let currentYear = document.getElementById("yearSelect") ? document.getElementById("yearSelect").value : "2025";
+    let currentMonth = document.getElementById("monthSelect") ? document.getElementById("monthSelect").value : "June";
+    let salesChart = null;
+    let lastResetDate = null;
+
+    // Real-time listeners
+    function setupRealtimeListeners() {
+      // Inventory listener
+      database.ref('inventory').on('value', (snapshot) => {
+        inventory = snapshot.val() || {};
+        renderInventory();
+      });
+
+      // Sales and profit listeners
+      function updateSalesProfitListeners() {
+        database.ref(`sales/${currentYear}/${currentMonth}`).off();
+        database.ref(`sales/${currentYear}`).off();
+        database.ref(`sales/${currentYear}/${currentMonth}/todaySales`).off();
+        database.ref('sales/todayProfit').off();
+
+        database.ref(`sales/${currentYear}/${currentMonth}`).on('value', (snapshot) => {
+          const data = snapshot.val() || {};
+          monthlySales = data.monthlySales || 0;
+          monthlyProfit = data.monthlyProfit || 0;
+          updateSalesProfitReports();
+        });
+
+        database.ref(`sales/${currentYear}`).on('value', (snapshot) => {
+          const data = snapshot.val() || {};
+          yearlySales = data.yearlySales || 0;
+          yearlyProfit = data.yearlyProfit || 0;
+          updateSalesProfitReports();
+        });
+
+        database.ref(`sales/${currentYear}/${currentMonth}/todaySales`).on('value', (snapshot) => {
+          todaySales = snapshot.val() ? Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data })) : [];
+          updateSalesProfitReports();
+          renderCustomerInfo();
+          renderDues();
+          renderTodaySales();
+        });
+
+        database.ref('sales/todayProfit').on('value', (snapshot) => {
+          todayProfit = snapshot.val() || 0;
+          updateSalesProfitReports();
+        });
+      }
+
+      // Customer info listener
+      database.ref('customerInfo').on('value', (snapshot) => {
+        customerInfo = snapshot.val() ? Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data })) : [];
+        renderCustomerInfo();
+        updateCustomerRanking();
+        renderDues();
+      });
+
+      // Customer payments listener
+      database.ref('customerPayments').on('value', (snapshot) => {
+        customerPayments = snapshot.val() || {};
+        renderCustomerInfo();
+        renderDues();
+      });
+
+      // Product sales listener
+      database.ref('productSales').on('value', (snapshot) => {
+        productSales = snapshot.val() || {};
+        updateBestSellingProducts();
+      });
+
+      // Customer buy prices listener
+      database.ref('customerBuyPrices').on('value', (snapshot) => {
+        customerBuyPrices = snapshot.val() || {};
+        searchCustomerBuyPrice();
+      });
+
+      // Reset todayProfit daily
+      const today = new Date().toISOString().split('T')[0];
+      database.ref('lastResetDate').once('value', (snapshot) => {
+        lastResetDate = snapshot.val();
+        if (lastResetDate !== today) {
+          database.ref('sales/todayProfit').set(0);
+          database.ref('lastResetDate').set(today);
+        }
+      });
+
+      updateSalesProfitListeners();
+    }
+
+    // Update data when month or year changes
+    function updateMonthlyData() {
+      currentYear = document.getElementById("yearSelect").value;
+      currentMonth = document.getElementById("monthSelect").value;
+      setupRealtimeListeners();
+    }
+
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      if (user === "Admin" && pass === "12345678") {
+        document.getElementById("login-page").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+        showSection('inventory');
+        setupRealtimeListeners();
+      } else {
+        document.getElementById("login-error").style.display = "block";
+      }
+    }
+
+    function showSection(id) {
+      const sections = document.querySelectorAll("main section");
+      const buttons = document.querySelectorAll("nav button");
+      sections.forEach(s => s.classList.remove("active"));
+      buttons.forEach(b => b.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.getElementById("btn-" + id).classList.add("active");
+      if (id === 'bestSelling') {
+        updateBestSellingProducts();
+      } else if (id === 'today') {
+        renderTodaySales();
+      } else if (id === 'inventory') {
+        renderInventory();
+      } else if (id === 'customer') {
+        renderCustomerInfo();
+      } else if (id === 'salesProfit') {
+        updateMonthlyData();
+      } else if (id === 'dues') {
+        renderDues();
+      } else if (id === 'salesHistory') {
+        searchSalesHistory();
+      } else if (id === 'customerBuyPrice') {
+        searchCustomerBuyPrice();
+      }
+    }
+
+    function showAdvancedOptions() {
+      const advancedOptions = document.getElementById("advancedOptions");
+      advancedOptions.style.display = advancedOptions.style.display === "none" ? "block" : "none";
+    }
+
+    function showAdvancedDuesOptions() {
+      const advancedDuesOptions = document.getElementById("advancedDuesOptions");
+      advancedDuesOptions.style.display = advancedDuesOptions.style.display === "none" ? "block" : "none";
+    }
+
+    function addToInventory() {
+      const name = document.getElementById("invProductName").value.trim();
+      const buy = parseFloat(document.getElementById("invBuyPrice").value);
+      const qty = parseInt(document.getElementById("invQty").value);
+      const imgInput = document.getElementById("invImg");
+      let imgURL = '';
+      if (!name || isNaN(buy) || isNaN(qty) || qty <= 0) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+      if (imgInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imgURL = e.target.result;
+          updateInventory(name, buy, qty, imgURL);
+        };
+        reader.readAsDataURL(imgInput.files[0]);
+      } else {
+        updateInventory(name, buy, qty, imgURL);
+      }
+    }
+
+    function updateInventory(name, buy, qty, imgURL) {
+      const currentQty = inventory[name] ? inventory[name].qty : 0;
+      const updatedItem = {
+        qty: currentQty + qty,
+        buyPrice: buy,
+        img: imgURL || (inventory[name] ? inventory[name].img : '')
+      };
+      database.ref('inventory/' + name).set(updatedItem);
+      clearInventoryInputs();
+    }
+
+    function clearInventoryInputs() {
+      document.getElementById("invProductName").value = "";
+      document.getElementById("invBuyPrice").value = "";
+      document.getElementById("invQty").value = "";
+      document.getElementById("invImg").value = "";
+    }
+
+    function renderInventory() {
+      const ul = document.getElementById("inventoryList");
+      ul.innerHTML = "";
+      for (let key in inventory) {
+        let imgTag = inventory[key].img ? `<img class="product-img" src="${inventory[key].img}" alt="${key}">` : "";
+        ul.innerHTML += `<li><span><strong>${key}</strong> - Qty: ${inventory[key].qty}, Buy Price: ৳${inventory[key].buyPrice.toFixed(2)} ${imgTag}</span><button class="edit-btn" onclick="editInventoryItem('${key}')">Edit</button></li>`;
+      }
+    }
+
+    function editInventoryItem(productName) {
+      const item = inventory[productName];
+      if (!item) return;
+      document.getElementById("editProductName").value = productName;
+      document.getElementById("editBuyPrice").value = item.buyPrice;
+      document.getElementById("editQty").value = item.qty;
+      document.getElementById("editImg").value = "";
+      document.getElementById("editInventoryForm").style.display = "block";
+    }
+
+    function updateInventoryItem() {
+      const name = document.getElementById("editProductName").value.trim();
+      const buy = parseFloat(document.getElementById("editBuyPrice").value);
+      const qty = parseInt(document.getElementById("editQty").value);
+      const imgInput = document.getElementById("editImg");
+      let imgURL = inventory[name] ? inventory[name].img : '';
+
+      if (!name || isNaN(buy) || isNaN(qty) || qty < 0) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+
+      if (imgInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imgURL = e.target.result;
+          saveInventoryItem(name, buy, qty, imgURL);
+        };
+        reader.readAsDataURL(imgInput.files[0]);
+      } else {
+        saveInventoryItem(name, buy, qty, imgURL);
+      }
+    }
+
+    function saveInventoryItem(name, buy, qty, imgURL) {
+      const updatedItem = {
+        qty: qty,
+        buyPrice: buy,
+        img: imgURL
+      };
+      database.ref('inventory/' + name).set(updatedItem);
+      cancelEdit();
+    }
+
+    function cancelEdit() {
+      document.getElementById("editProductName").value = "";
+      document.getElementById("editBuyPrice").value = "";
+      document.getElementById("editQty").value = "";
+      document.getElementById("editImg").value = "";
+      document.getElementById("editInventoryForm").style.display = "none";
+    }
+
+    function autoFillPrice() {
+      const customerName = document.getElementById("saleCustomerName").value.trim();
+      const productName = document.getElementById("saleProductName").value.trim();
+      const salePriceInput = document.getElementById("salePrice");
+
+      if (customerName && productName && customerBuyPrices[customerName] && customerBuyPrices[customerName][productName]) {
+        salePriceInput.value = customerBuyPrices[customerName][productName].price.toFixed(2);
+      } else {
+        salePriceInput.value = "";
+      }
+    }
+
+    function processTodaySale() {
+      const customerName = document.getElementById("saleCustomerName").value.trim();
+      const name = document.getElementById("saleProductName").value.trim();
+      const qty = parseInt(document.getElementById("saleQty").value);
+      const price = parseFloat(document.getElementById("salePrice").value);
+      const paid = parseFloat(document.getElementById("salePaid").value) || 0;
+
+      if (!customerName || !name || isNaN(qty) || qty <= 0 || isNaN(price) || price <= 0) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+      if (!customerInfo.some(c => c.name === customerName)) {
+        alert("কাস্টমার তালিকায় নেই। প্রথমে কাস্টমার তথ্য সংরক্ষণ করুন।");
+        return;
+      }
+      if (!inventory[name] || inventory[name].qty < qty) {
+        alert("ইনভেন্টরিতে পর্যাপ্ত পণ্য নেই");
+        return;
+      }
+      const saleAmount = price * qty;
+      if (paid < 0 || paid > saleAmount) {
+        alert("প্রদত্ত পরিমাণ নেগেটিভ বা বিক্রয় মূল্যের চেয়ে বেশি হতে পারে না");
+        return;
+      }
+
+      // Update inventory
+      database.ref('inventory/' + name).update({ qty: inventory[name].qty - qty });
+
+      // Update sales and profit
+      const profit = (price - inventory[name].buyPrice) * qty;
+      database.ref(`sales/${currentYear}/${currentMonth}`).update({
+        monthlySales: firebase.database.ServerValue.increment(saleAmount),
+        monthlyProfit: firebase.database.ServerValue.increment(profit)
+      });
+      database.ref(`sales/${currentYear}`).update({
+        yearlySales: firebase.database.ServerValue.increment(saleAmount),
+        yearlyProfit: firebase.database.ServerValue.increment(profit)
+      });
+      database.ref('sales').update({
+        todayProfit: firebase.database.ServerValue.increment(profit)
+      });
+
+      // Update todaySales with paid amount
+      const saleId = database.ref(`sales/${currentYear}/${currentMonth}/todaySales`).push().key;
+      database.ref(`sales/${currentYear}/${currentMonth}/todaySales/${saleId}`).set({
+        customer: customerName,
+        product: name,
+        qty: qty,
+        price: saleAmount,
+        paid: paid,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        unitPrice: price
+      });
+
+      // Update customer buy prices
+      database.ref(`customerBuyPrices/${customerName}/${name}`).set({
+        price: price,
+        lastUpdated: firebase.database.ServerValue.TIMESTAMP
+      });
+
+      // Record payment if any
+      if (paid > 0) {
+        const paymentId = database.ref(`customerPayments/${customerName}/${currentYear}/${currentMonth}`).push().key;
+        database.ref(`customerPayments/${customerName}/${currentYear}/${currentMonth}/${paymentId}`).set({
+          amount: paid,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          source: 'sale'
+        });
+      }
+
+      // Update productSales
+      const currentQty = productSales[name] || 0;
+      database.ref('productSales/' + name).set(currentQty + qty);
+
+      clearTodaySalesInputs();
+    }
+
+    function editTodaySale(saleId) {
+      const sale = todaySales.find(s => s.id === saleId);
+      if (!sale) return;
+      document.getElementById("editSaleId").value = saleId;
+      document.getElementById("editSaleCustomerName").value = sale.customer;
+      document.getElementById("editSaleProductName").value = sale.product;
+      document.getElementById("editSaleQty").value = sale.qty;
+      document.getElementById("editSalePrice").value = sale.price / sale.qty;
+      document.getElementById("editSalePaid").value = sale.paid || 0;
+      document.getElementById("editSaleForm").style.display = "block";
+    }
+
+    function updateTodaySale() {
+      const saleId = document.getElementById("editSaleId").value;
+      const customerName = document.getElementById("editSaleCustomerName").value.trim();
+      const name = document.getElementById("editSaleProductName").value.trim();
+      const qty = parseInt(document.getElementById("editSaleQty").value);
+      const price = parseFloat(document.getElementById("editSalePrice").value);
+      const paid = parseFloat(document.getElementById("editSalePaid").value) || 0;
+
+      const originalSale = todaySales.find(s => s.id === saleId);
+      if (!originalSale) {
+        alert("Sale not found");
+        return;
+      }
+
+      if (!customerName || !name || isNaN(qty) || qty <= 0 || isNaN(price) || price <= 0) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+      if (!customerInfo.some(c => c.name === customerName)) {
+        alert("কাস্টমার তালিকায় নেই। প্রথমে কাস্টমার তথ্য সংরক্ষণ করুন।");
+        return;
+      }
+      if (!inventory[name]) {
+        alert("ইনভেন্টরিতে পণ্য নেই");
+        return;
+      }
+
+      const saleAmount = price * qty;
+      if (paid < 0 || paid > saleAmount) {
+        alert("প্রদত্ত পরিমাণ নেগেটিভ বা বিক্রয় মূল্যের চেয়ে বেশি হতে পারে না");
+        return;
+      }
+
+      // Revert original inventory changes
+      const originalQty = originalSale.qty;
+      database.ref('inventory/' + originalSale.product).update({
+        qty: inventory[originalSale.product].qty + originalQty
+      });
+
+      // Apply new inventory changes
+      if (inventory[name].qty < qty) {
+        alert("ইনভেন্টরিতে পর্যাপ্ত পণ্য নেই");
+        return;
+      }
+      database.ref('inventory/' + name).update({ qty: inventory[name].qty - qty });
+
+      // Revert original sales and profit
+      const originalSaleAmount = originalSale.price;
+      const originalProfit = (originalSale.price / originalSale.qty - inventory[originalSale.product].buyPrice) * originalSale.qty;
+      database.ref(`sales/${currentYear}/${currentMonth}`).update({
+        monthlySales: firebase.database.ServerValue.increment(-originalSaleAmount),
+        monthlyProfit: firebase.database.ServerValue.increment(-originalProfit)
+      });
+      database.ref(`sales/${currentYear}`).update({
+        yearlySales: firebase.database.ServerValue.increment(-originalSaleAmount),
+        yearlyProfit: firebase.database.ServerValue.increment(-originalProfit)
+      });
+      database.ref('sales').update({
+        todayProfit: firebase.database.ServerValue.increment(-originalProfit)
+      });
+
+      // Revert original payment
+      if (originalSale.paid > 0) {
+        database.ref(`customerPayments/${originalSale.customer}/${currentYear}/${currentMonth}`).once('value', (snapshot) => {
+          const payments = snapshot.val() || {};
+          const paymentId = Object.keys(payments).find(key => 
+            payments[key].amount === originalSale.paid && 
+            payments[key].source === 'sale' && 
+            payments[key].timestamp === originalSale.timestamp
+          );
+          if (paymentId) {
+            database.ref(`customerPayments/${originalSale.customer}/${currentYear}/${currentMonth}/${paymentId}`).remove();
+          }
+        });
+      }
+
+      // Revert original product sales
+      const originalProductSalesQty = productSales[originalSale.product] || 0;
+      database.ref('productSales/' + originalSale.product).set(originalProductSalesQty - originalSale.qty);
+
+      // Apply new sales and profit
+      const profit = (price - inventory[name].buyPrice) * qty;
+      database.ref(`sales/${currentYear}/${currentMonth}`).update({
+        monthlySales: firebase.database.ServerValue.increment(saleAmount),
+        monthlyProfit: firebase.database.ServerValue.increment(profit)
+      });
+      database.ref(`sales/${currentYear}`).update({
+        yearlySales: firebase.database.ServerValue.increment(saleAmount),
+        yearlyProfit: firebase.database.ServerValue.increment(profit)
+      });
+      database.ref('sales').update({
+        todayProfit: firebase.database.ServerValue.increment(profit)
+      });
+
+      // Update sale record
+      database.ref(`sales/${currentYear}/${currentMonth}/todaySales/${saleId}`).set({
+        customer: customerName,
+        product: name,
+        qty: qty,
+        price: saleAmount,
+        paid: paid,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        unitPrice: price
+      });
+
+      // Update customer buy prices
+      database.ref(`customerBuyPrices/${customerName}/${name}`).set({
+        price: price,
+        lastUpdated: firebase.database.ServerValue.TIMESTAMP
+      });
+
+      // Record new payment if any
+      if (paid > 0) {
+        const paymentId = database.ref(`customerPayments/${customerName}/${currentYear}/${currentMonth}`).push().key;
+        database.ref(`customerPayments/${customerName}/${currentYear}/${currentMonth}/${paymentId}`).set({
+          amount: paid,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          source: 'sale'
+        });
+      }
+
+      // Update productSales
+      const currentQty = productSales[name] || 0;
+      database.ref('productSales/' + name).set(currentQty + qty);
+
+      cancelSaleEdit();
+    }
+
+    function cancelSaleEdit() {
+      document.getElementById("editSaleId").value = "";
+      document.getElementById("editSaleCustomerName").value = "";
+      document.getElementById("editSaleProductName").value = "";
+      document.getElementById("editSaleQty").value = "";
+      document.getElementById("editSalePrice").value = "";
+      document.getElementById("editSalePaid").value = "";
+      document.getElementById("editSaleForm").style.display = "none";
+    }
+
+    function clearTodaySalesInputs() {
+      document.getElementById("saleCustomerName").value = "";
+      document.getElementById("saleProductName").value = "";
+      document.getElementById("saleQty").value = "";
+      document.getElementById("salePrice").value = "";
+      document.getElementById("salePaid").value = "";
+    }
+
+    function renderTodaySales() {
+      const ul = document.getElementById("todaySalesList");
+      ul.innerHTML = "";
+      let totalSaleAmount = 0;
+      todaySales.forEach(sale => {
+        totalSaleAmount += sale.price;
+        const paidText = sale.paid !== undefined ? `, Paid: ৳${sale.paid.toFixed(2)}` : ", Paid: ৳0.00";
+        ul.innerHTML += `
+          <li>
+            <span><strong>${sale.customer}</strong> bought <em>${sale.product}</em> (Qty: ${sale.qty}) for ৳${sale.price.toFixed(2)}${paidText}</span>
+            <button class="edit-btn" onclick="editTodaySale('${sale.id}')">Edit</button>
+          </li>`;
+      });
+      document.getElementById("todayProfit").textContent = `Today's Profit: ৳${todayProfit.toFixed(2)}`;
+    }
+
+    function updateSalesProfitReports() {
+      document.getElementById("monthlySalesReport").textContent = `Total Monthly Sales (${currentMonth} ${currentYear}): ৳${monthlySales.toFixed(2)}`;
+      document.getElementById("monthlyProfitReport").textContent = `Monthly Profit (${currentMonth} ${currentYear}): ৳${monthlyProfit.toFixed(2)}`;
+      document.getElementById("yearlySalesReport").textContent = `Total Yearly Sales (${currentYear}): ৳${yearlySales.toFixed(2)}`;
+      document.getElementById("yearlyProfitReport").textContent = `Yearly Profit (${currentYear}): ৳${yearlyProfit.toFixed(2)}`;
+      document.getElementById("todayProfitReport").textContent = `Today's Profit: ৳${todayProfit.toFixed(2)}`;
+
+      // Update customer ranking
+      const ul = document.getElementById("salesCustomerRankingList");
+      if (todaySales.length === 0) {
+        ul.innerHTML = "<li>No sales data yet.</li>";
+      } else {
+        const countMap = {};
+        todaySales.forEach(sale => {
+          if (!countMap[sale.customer]) countMap[sale.customer] = 0;
+          countMap[sale.customer]++;
+        });
+        const ranked = Object.entries(countMap).sort((a, b) => b[1] - a[1]);
+        ul.innerHTML = "";
+        ranked.forEach(([name, count]) => {
+          ul.innerHTML += `<li>${name} - Purchases: ${count}</li>`;
+        });
+      }
+
+      // Update chart
+      database.ref(`sales/${currentYear}`).once('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const salesData = Array(12).fill(0);
+        const profitData = Array(12).fill(0);
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        months.forEach((month, index) => {
+          if (data[month]) {
+            salesData[index] = data[month].monthlySales || 0;
+            profitData[index] = data[month].monthlyProfit || 0;
+          }
+        });
+        const ctx = document.getElementById('monthlySalesChart').getContext('2d');
+        if (salesChart) {
+          salesChart.destroy();
+        }
+        salesChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: 'Monthly Sales (৳)',
+                data: salesData,
+                backgroundColor: '#1b263b',
+                borderColor: '#fca311',
+                borderWidth: 1
+              },
+              {
+                label: 'Monthly Profit (৳)',
+                data: profitData,
+                backgroundColor: '#28a745',
+                borderColor: '#218838',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Amount (৳)' } },
+              x: { title: { display: true, text: 'Month' } }
+            },
+            plugins: { legend: { position: 'top' } }
+          }
+        });
+      });
+    }
+
+    function saveCustomerInfo() {
+      const name = document.getElementById("custName").value.trim();
+      const contact = document.getElementById("custContact").value.trim();
+      const address = document.getElementById("custAddress").value.trim();
+
+      if (!name || !contact || !address) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+
+      const custId = database.ref('customerInfo').push().key;
+      database.ref(`customerInfo/${custId}`).set({ name, contact, address });
+
+      document.getElementById("custName").value = "";
+      document.getElementById("custContact").value = "";
+      document.getElementById("custAddress").value = "";
+    }
+
+    function editCustomerInfo(customerId) {
+      const customer = customerInfo.find(c => c.id === customerId);
+      if (!customer) return;
+      document.getElementById("editCustomerId").value = customerId;
+      document.getElementById("editCustomerName").value = customer.name;
+      document.getElementById("editCustomerContact").value = customer.contact;
+      document.getElementById("editCustomerAddress").value = customer.address;
+      document.getElementById("editCustomerForm").style.display = "block";
+    }
+
+    function updateCustomerInfo() {
+      const id = document.getElementById("editCustomerId").value;
+      const name = document.getElementById("editCustomerName").value.trim();
+      const contact = document.getElementById("editCustomerContact").value.trim();
+      const address = document.getElementById("editCustomerAddress").value.trim();
+
+      if (!name || !contact || !address) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+
+      database.ref(`customerInfo/${id}`).set({ name, contact, address });
+      cancelCustomerEdit();
+    }
+
+    function cancelCustomerEdit() {
+      document.getElementById("editCustomerId").value = "";
+      document.getElementById("editCustomerName").value = "";
+      document.getElementById("editCustomerContact").value = "";
+      document.getElementById("editCustomerAddress").value = "";
+      document.getElementById("editCustomerForm").style.display = "none";
+    }
+
+    function recordPayment() {
+      const customerName = document.getElementById("paymentCustomerName").value.trim();
+      const amount = parseFloat(document.getElementById("paymentAmount").value);
+      const today = new Date();
+      const year = today.getFullYear().toString();
+      const month = today.toLocaleString('default', { month: 'long' });
+
+      if (!customerName || isNaN(amount) || amount <= 0) {
+        alert("সঠিক কাস্টমার নাম এবং পেমেন্টের পরিমাণ দিন");
+        return;
+      }
+      if (!customerInfo.some(c => c.name === customerName)) {
+        alert("কাস্টমার তালিকায় নেই।");
+        return;
+      }
+
+      const paymentId = database.ref(`customerPayments/${customerName}/${year}/${month}`).push().key;
+      database.ref(`customerPayments/${customerName}/${year}/${month}/${paymentId}`).set({
+        amount: amount,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        source: 'manual'
+      });
+
+      document.getElementById("paymentCustomerName").value = "";
+      document.getElementById("paymentAmount").value = "";
+    }
+
+    function togglePaymentHistory(customerId) {
+      const historyElement = document.getElementById(`payment-history-${customerId}`);
+      historyElement.classList.toggle('active');
+    }
+
+    function renderCustomerInfo() {
+      const ul = document.getElementById("customerList");
+      ul.innerHTML = "";
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const showDuesOnly = document.getElementById("showDuesOnly")?.checked || false;
+
+      let filtered = customerInfo;
+      if (query) {
+        filtered = customerInfo.filter(customer => 
+          customer.name.toLowerCase().includes(query) || 
+          customer.contact.toLowerCase().includes(query) || 
+          customer.address.toLowerCase().includes(query)
+        );
+      }
+
+      if (filtered.length === 0) {
+        ul.innerHTML = "<li>No results found.</li>";
+        return;
+      }
+
+      filtered.forEach(customer => {
+        let totalPurchases = 0;
+        let totalPayments = 0;
+        let paymentHistory = [];
+
+        database.ref('sales').once('value', async (snapshot) => {
+          const salesData = snapshot.val() || {};
+          for (let year in salesData) {
+            if (year !== 'todayProfit' && year !== 'lastResetDate') {
+              for (let month in salesData[year]) {
+                if (salesData[year][month].todaySales) {
+                  Object.values(salesData[year][month].todaySales).forEach(sale => {
+                    if (sale.customer === customer.name) {
+                      totalPurchases += sale.price;
+                      if (sale.paid && sale.paid > 0) {
+                        paymentHistory.push({
+                          date: sale.timestamp ? new Date(sale.timestamp).toLocaleString() : 'Unknown',
+                          amount: sale.paid,
+                          source: 'Sale'
+                        });
+                        totalPayments += sale.paid;
+                      }
+                    }
+                  });
+                }
+              }
+            }
+          }
+
+          if (customerPayments[customer.name]) {
+            for (let year in customerPayments[customer.name]) {
+              for (let month in customerPayments[customer.name][year]) {
+                Object.values(customerPayments[customer.name][year][month]).forEach(payment => {
+                  if (payment.source === 'manual') {
+                    paymentHistory.push({
+                      date: payment.timestamp ? new Date(payment.timestamp).toLocaleString() : 'Unknown',
+                      amount: payment.amount,
+                      source: 'Manual'
+                    });
+                    totalPayments += payment.amount;
+                  }
+                });
+              }
+            }
+          }
+
+          paymentHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          const due = totalPurchases - totalPayments;
+          const customerId = customer.name.replace(/[^a-zA-Z0-9]/g, '_');
+
+          if (showDuesOnly && due <= 0) return;
+
+          ul.innerHTML += `
+            <li>
+              <div>
+                <strong>${customer.name}</strong> - Contact: ${customer.contact}, Address: ${customer.address}
+                <div class="customer-details">
+                  Total Purchases: ৳${totalPurchases.toFixed(2)}<br>
+                  Total Paid: ৳${totalPayments.toFixed(2)}<br>
+                  Due: ৳${due.toFixed(2)}
+                </div>
+                <button class="toggle-history-btn" onclick="togglePaymentHistory('${customerId}')">Toggle Payment History</button>
+                <button class="edit-btn" onclick="editCustomerInfo('${customer.id}')">Edit</button>
+                <div id="payment-history-${customerId}" class="payment-history">
+                  <h4>Payment History</h4>
+                  <ul>
+                    ${paymentHistory.length > 0 ? paymentHistory.map(p => `<li>${p.date} - ${p.source}: ৳${p.amount.toFixed(2)}`).join('') : '<li>No payments found.</li>'}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          `;
+        });
+      });
+    }
+
+    function searchCustomers() {
+      renderCustomerInfo();
+    }
+
+    function renderDues() {
+      const ul = document.getElementById("duesList");
+      ul.innerHTML = "";
+      const query = document.getElementById("duesSearchInput").value.toLowerCase();
+      const sortByDueAmount = document.getElementById("sortByDueAmount")?.checked || false;
+
+      let filtered = customerInfo.filter(customer => customer.name.toLowerCase().includes(query));
+      if (filtered.length === 0) {
+        ul.innerHTML = "<li>No results found.</li>";
+        return;
+      }
+
+      let duesData = [];
+
+      filtered.forEach(customer => {
+        let totalPurchases = 0;
+        let totalPayments = 0;
+        let paymentHistory = [];
+
+        database.ref('sales').once('value', async (snapshot) => {
+          const salesData = snapshot.val() || {};
+          for (let year in salesData) {
+            if (year !== 'todayProfit' && year !== 'lastResetDate') {
+              for (let month in salesData[year]) {
+                if (salesData[year][month].todaySales) {
+                  Object.values(salesData[year][month].todaySales).forEach(sale => {
+                    if (sale.customer === customer.name) {
+                      totalPurchases += sale.price;
+                      totalPayments += sale.paid || 0;
+                      if (sale.paid && sale.paid > 0) {
+                        paymentHistory.push({
+                          date: sale.timestamp ? new Date(sale.timestamp).toLocaleString() : 'Unknown',
+                          amount: sale.paid,
+                          source: 'Sale'
+                        });
+                      }
+                    }
+                  });
+                }
+              }
+            }
+          }
+
+          if (customerPayments[customer.name]) {
+            for (let year in customerPayments[customer.name]) {
+              for (let month in customerPayments[customer.name][year]) {
+                Object.values(customerPayments[customer.name][year][month]).forEach(payment => {
+                  totalPayments += payment.amount;
+                  if (payment.source === 'manual') {
+                    paymentHistory.push({
+                      date: payment.timestamp ? new Date(payment.timestamp).toLocaleString() : 'Unknown',
+                      amount: payment.amount,
+                      source: 'Manual'
+                    });
+                  }
+                });
+              }
+            }
+          }
+
+          paymentHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+          const due = totalPurchases - totalPayments;
+          const customerId = customer.name.replace(/[^a-zA-Z0-9]/g, '_');
+
+          if (due > 0) {
+            duesData.push({
+              name: customer.name,
+              contact: customer.contact,
+              address: customer.address,
+              totalPurchases,
+              totalPayments,
+              due,
+              paymentHistory,
+              customerId
+            });
+          }
+        });
+      });
+
+      setTimeout(() => {
+        if (sortByDueAmount) {
+          duesData.sort((a, b) => b.due - a.due);
+        }
+
+        if (duesData.length === 0) {
+          ul.innerHTML = "<li>No results found.</li>";
+          return;
+        }
+
+        duesData.forEach(customer => {
+          ul.innerHTML += `
+            <li>
+              <strong>${customer.name}</strong> - Contact: ${customer.contact}, Address: ${customer.address}
+              <div class="due-details">
+                Total Purchases: ৳${customer.totalPurchases.toFixed(2)}<br>
+                Total Paid: ৳${customer.totalPayments.toFixed(2)}<br>
+                Due: ৳${customer.due.toFixed(2)}
+              </div>
+              <button class="toggle-history-btn" onclick="togglePaymentHistory('${customer.customerId}')">Toggle Payment History</button>
+              <button class="edit-btn" onclick="editCustomerInfo('${customer.id}')">Edit</button>
+              <div id="payment-history-${customer.customerId}" class="payment-history">
+                <h4>Payment History</h4>
+                <ul>
+                  ${customer.paymentHistory.length > 0 ? customer.paymentHistory.map(p => `<li>${p.date} - ${p.source}: ৳${p.amount.toFixed(2)}`).join('') : '<li>No payments found.</li>'}
+                </ul>
+              </div>
+            </li>
+          `;
+        });
+      }, 1000);
+    }
+
+    function searchDues() {
+      renderDues();
+    }
+
+    function updateCustomerRanking() {
+      if (customerInfo.length === 0) {
+        document.getElementById("customerRankingList").innerHTML = "<li>No data yet.</li>";
+        return;
+      }
+      const countMap = {};
+      customerInfo.forEach(customer => {
+        if (!countMap[customer.name]) countMap[customer.name] = 0;
+        countMap[customer.name]++;
+      });
+      const ranked = Object.entries(countMap).sort((a, b) => b[1] - a[1]);
+      const ul = document.getElementById("customerRankingList");
+      ul.innerHTML = "";
+      ranked.forEach(([name, count]) => {
+        ul.innerHTML += `<li>${name} - Entries: ${count}</li>`;
+      });
+    }
+
+    function updateBestSellingProducts() {
+      const ul = document.getElementById("bestSellingList");
+      if (Object.keys(productSales).length === 0) {
+        ul.innerHTML = "<li>No sales data yet.</li>";
+        return;
+      }
+      const sortedProducts = Object.entries(productSales).sort((a, b) => b[1] - a[1]);
+      ul.innerHTML = "";
+      sortedProducts.forEach(([product, qty]) => {
+        ul.innerHTML += `<li><span>${product}</span><span>Qty Sold: ${qty}</span></li>`;
+      });
+    }
+
+    function searchSalesHistory() {
+      const customerName = document.getElementById("salesHistoryCustomerName").value.trim().toLowerCase();
+      const selectedYear = document.getElementById("salesHistoryYear").value;
+      const selectedMonth = document.getElementById("salesHistoryMonth").value;
+      const selectedDate = document.getElementById("salesHistoryDate").value;
+      const ul = document.getElementById("salesHistoryList");
+      ul.innerHTML = "<li>Loading...</li>";
+
+      database.ref('sales').once('value', (snapshot) => {
+        const salesData = snapshot.val() || {};
+        let salesHistory = [];
+
+        for (let year in salesData) {
+          if (year !== 'todayProfit' && year !== 'lastResetDate') {
+            if (selectedYear && year !== selectedYear) continue;
+            for (let month in salesData[year]) {
+              if (selectedMonth && month !== selectedMonth) continue;
+              if (salesData[year][month].todaySales) {
+                Object.values(salesData[year][month].todaySales).forEach(sale => {
+                  if (!customerName || sale.customer.toLowerCase() === customerName) {
+                    const saleDate = sale.timestamp ? new Date(sale.timestamp).toISOString().split('T')[0] : null;
+                    if (!selectedDate || (saleDate && saleDate === selectedDate)) {
+                      salesHistory.push({
+                        date: sale.timestamp ? new Date(sale.timestamp).toLocaleString() : 'Unknown',
+                        customer: sale.customer,
+                        product: sale.product,
+                        qty: sale.qty,
+                        price: sale.price,
+                        paid: sale.paid || 0,
+                        year,
+                        month
+                      });
+                    }
+                  }
+                });
+              }
+            }
+          }
+        }
+
+        salesHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        ul.innerHTML = "";
+        if (salesHistory.length === 0) {
+          ul.innerHTML = "<li>No sales data found.</li>";
+          return;
+        }
+
+        salesHistory.forEach(sale => {
+          ul.innerHTML += `
+            <li>
+              <span>
+                <strong>${sale.customer}</strong> - 
+                Product: ${sale.product}, 
+                Quantity: ${sale.qty}, 
+                Total Price: ৳${sale.price.toFixed(2)}, 
+                Paid: ৳${sale.paid.toFixed(2)}, 
+                Date: ${sale.date}
+              </span>
+            </li>
+          `;
+        });
+      });
+    }
+
+    function searchCustomerBuyPrice() {
+      const query = document.getElementById("customerBuyPriceSearch").value.trim().toLowerCase();
+      const ul = document.getElementById("customerBuyPriceList");
+      ul.innerHTML = "<li>Loading...</li>";
+
+      let filteredPrices = {};
+      if (query) {
+        filteredPrices = Object.keys(customerBuyPrices)
+          .filter(customer => customer.toLowerCase().includes(query))
+          .reduce((obj, customer) => {
+            obj[customer] = customerBuyPrices[customer];
+            return obj;
+          }, {});
+      } else {
+        filteredPrices = customerBuyPrices;
+      }
+
+      ul.innerHTML = "";
+      if (Object.keys(filteredPrices).length === 0) {
+        ul.innerHTML = "<li>No data found.</li>";
+        return;
+      }
+
+      Object.entries(filteredPrices).forEach(([customer, products]) => {
+        Object.entries(products).forEach(([product, data]) => {
+          const priceId = `${customer}_${product}`.replace(/[^a-zA-Z0-9]/g, '_');
+          ul.innerHTML += `
+            <li>
+              <span>
+                <strong>${customer}</strong> - Product: ${product}, Price per Unit: ৳${data.price.toFixed(2)}, 
+                Last Updated: ${data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'Unknown'}
+              </span>
+              <button class="edit-btn" onclick="editCustomerPrice('${customer}', '${product}')">Edit</button>
+            </li>
+          `;
+        });
+      });
+    }
+
+    function editCustomerPrice(customer, product) {
+      if (!customerBuyPrices[customer] || !customerBuyPrices[customer][product]) return;
+      document.getElementById("editCustomerPriceCustomer").value = customer;
+      document.getElementById("editCustomerPriceProduct").value = product;
+      document.getElementById("editCustomerPrice").value = customerBuyPrices[customer][product].price.toFixed(2);
+      document.getElementById("editCustomerPriceForm").style.display = "block";
+    }
+
+    function updateCustomerPrice() {
+      const customer = document.getElementById("editCustomerPriceCustomer").value.trim();
+      const product = document.getElementById("editCustomerPriceProduct").value.trim();
+      const price = parseFloat(document.getElementById("editCustomerPrice").value);
+
+      if (!customer || !product || isNaN(price) || price <= 0) {
+        alert("সঠিক তথ্য দিন");
+        return;
+      }
+
+      database.ref(`customerBuyPrices/${customer}/${product}`).set({
+        price: price,
+        lastUpdated: firebase.database.ServerValue.TIMESTAMP
+      });
+
+      cancelCustomerPriceEdit();
+    }
+
+    function cancelCustomerPriceEdit() {
+      document.getElementById("editCustomerPriceCustomer").value = "";
+      document.getElementById("editCustomerPriceProduct").value = "";
+      document.getElementById("editCustomerPrice").value = "";
+      document.getElementById("editCustomerPriceForm").style.display = "none";
+    }
+  </script>
+</body>
+</html>
